@@ -1,5 +1,18 @@
 #python file for creating poker dummy bot in order to create training input data
 import random
+from enum import Enum
+
+class Hand(Enum):
+    HIGH_CARD = 0
+    PAIR = 1
+    TWO_PAIR = 2
+    THREE_KIND = 3
+    STRAIGHT = 4
+    FLUSH = 5
+    FULL_HOUSE = 6
+    FOUR_KIND = 7
+    STRAIGHT_FLUSH = 8
+    ROYAL_FLUSH = 9
 
 
 class DummyBot:
@@ -53,7 +66,7 @@ class DummyBot:
             self.opponents[-1].append((card,suit)) 
             self.cur_cards[card] = self.cur_cards.get(card, 0) + 1
 
-
+    #generate another table card each round
     def generate_cards(self):
         card = random.randint(2,14)
         suit = random.randint(1,4)
@@ -65,3 +78,38 @@ class DummyBot:
         self.suits[(card,suit)] = 1
         self.table.append((card,suit))
         self.cur_cards[card] = self.cur_cards.get(card, 0) + 1
+
+    def decide_winner(self):
+        if len(self.cur_cards) < 7:
+            print("not enough cards")
+            return
+        else:
+            pass
+
+    def check_hand(self, hand):
+        card_nums = [x[0] for x in hand]
+        card_nums += [x[0] for x in self.table]
+        card_nums.sort()
+        card_suits = [x[1] for x in hand]
+        card_suits += [x[1] for x in self.table]
+
+        combo = Hand.HIGH_CARD
+        #check for duplicate combos
+        new_val = False
+        for i in range(1,len(card_nums)):
+            if card_nums[i] == card_nums[i-1] and new_val == False:
+                if combo == Hand.HIGH_CARD:
+                    combo = Hand.PAIR
+                elif combo == Hand.PAIR:
+                    combo = Hand.THREE_KIND
+                elif combo == Hand.THREE_KIND:
+                    combo = Hand.FOUR_KIND
+            elif card_nums[i] == card_nums[i-1] and new_val:
+                if combo == Hand.HIGH_CARD:
+                    combo = Hand.PAIR
+                elif combo == Hand.PAIR:
+                    combo = Hand.TWO_PAIR
+                elif combo == Hand.THREE_KIND:
+                    combo = Hand.FULL_HOUSE
+            else:
+                new_val = True
