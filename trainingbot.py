@@ -111,5 +111,31 @@ class DummyBot:
                     combo = Hand.TWO_PAIR
                 elif combo == Hand.THREE_KIND:
                     combo = Hand.FULL_HOUSE
-            else:
+            elif card_nums[i] != card_nums[i-1] and combo != Hand.HIGH_CARD:
                 new_val = True
+
+        #check for same suit
+        suit = card_suits[0]
+        flush = True
+        for i in range(1,len(card_suits)):
+            if card_suits[i] != suit:
+                flush = False
+        
+        #check for straight
+        straight = False
+        if combo == Hand.HIGH_CARD:
+            straight = True
+            for i in range(1,len(card_nums)):
+                if card_nums[i] != card_nums[i-1]+1:
+                    straight = False
+                
+        if straight and flush:
+            if card_nums[-1] == 14:
+                combo = Hand.ROYAL_FLUSH
+            else:
+                combo = Hand.STRAIGHT_FLUSH
+        elif combo != Hand.FOUR_KIND and combo != Hand.FULL_HOUSE:
+            if flush:
+                combo = Hand.FLUSH
+            elif straight:
+                combo = Hand.STRAIGHT
