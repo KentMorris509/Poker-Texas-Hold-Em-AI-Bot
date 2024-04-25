@@ -84,7 +84,25 @@ class DummyBot:
             print("not enough cards")
             return
         else:
-            pass
+            #create own hand
+            bot_hand = self.check_hand(self.hand + self.table)
+            #create opponent hands
+            op_hands = []
+            for o in self.opponents:
+                op_hands.append(o + self.table)
+
+            #check if opponent has better hand
+            for hand in op_hands:
+                if hand[0] > bot_hand[0]:
+                    return -1
+                elif hand[0] == bot_hand[0]:
+                    if hand[1] > bot_hand[1]:
+                        return -1
+                    elif hand[1] == bot_hand[1]:
+                        return 0
+            #if not, bot wins
+            return 1
+
 
     def check_hand(self, hand):
         card_nums = [x[0] for x in hand]
@@ -93,10 +111,13 @@ class DummyBot:
         card_suits = [x[1] for x in hand]
         card_suits += [x[1] for x in self.table]
 
+        high = card_nums[0]
         combo = Hand.HIGH_CARD
         #check for duplicate combos
         new_val = False
         for i in range(1,len(card_nums)):
+            if card_nums[i] > high:
+                high = card_nums[i]
             if card_nums[i] == card_nums[i-1] and new_val == False:
                 if combo == Hand.HIGH_CARD:
                     combo = Hand.PAIR
@@ -139,3 +160,5 @@ class DummyBot:
                 combo = Hand.FLUSH
             elif straight:
                 combo = Hand.STRAIGHT
+
+        return (combo, high)
