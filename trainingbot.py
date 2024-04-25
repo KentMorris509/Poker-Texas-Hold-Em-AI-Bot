@@ -162,3 +162,12 @@ class DummyBot:
                 combo = Hand.STRAIGHT
 
         return (combo, high)
+    
+    def get_hand(self):
+        return self.hand
+    
+    def get_table(self):
+        return self.table
+    
+    def get_opponents(self):
+        return self.opponents
