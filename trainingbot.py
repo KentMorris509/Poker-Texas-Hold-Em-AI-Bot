@@ -14,6 +14,30 @@ class Hand(Enum):
     STRAIGHT_FLUSH = 8
     ROYAL_FLUSH = 9
 
+    # Define less-than comparison
+    def __lt__(self, other):
+        if isinstance(other, Hand):
+            return self.value < other.value
+        return NotImplemented
+
+    # Define less-than-or-equal-to comparison
+    def __le__(self, other):
+        if isinstance(other, Hand):
+            return self.value <= other.value
+        return NotImplemented
+
+    # Define greater-than comparison
+    def __gt__(self, other):
+        if isinstance(other, Hand):
+            return self.value > other.value
+        return NotImplemented
+
+    # Define greater-than-or-equal-to comparison
+    def __ge__(self, other):
+        if isinstance(other, Hand):
+            return self.value >= other.value
+        return NotImplemented
+
 
 class DummyBot:
    
@@ -80,7 +104,7 @@ class DummyBot:
         self.cur_cards[card] = self.cur_cards.get(card, 0) + 1
 
     def decide_winner(self):
-        if len(self.cur_cards) < 7:
+        if len(self.hand + self.table) < 5 and len(self.opponents) < 1:
             print("not enough cards")
             return
         else:
@@ -89,7 +113,7 @@ class DummyBot:
             #create opponent hands
             op_hands = []
             for o in self.opponents:
-                op_hands.append(o + self.table)
+                op_hands.append(self.check_hand(o + self.table))
 
             #check if opponent has better hand
             for hand in op_hands:
