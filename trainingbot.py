@@ -45,7 +45,7 @@ class DummyBot:
         self.hand = [] #dummy hand
         self.table = [] #cards on table
         self.cur_cards = {} #tracks max 4 of each card value
-        self.suits = {} #tracks any repeated card generations
+        self.suits = set() #tracks any repeated card generations
         self.opponents = [] #opponent hand
         
 
@@ -57,7 +57,7 @@ class DummyBot:
             suit = random.randint(1,4)
             while (card,suit) in self.suits: #check for existing card
                 suit = ((suit+1)%4)+1
-            self.suits[(card,suit)] = 1
+            self.suits.add((card,suit))
             self.hand.append((card,suit)) 
             self.cur_cards[card] = self.cur_cards.get(card, 0) + 1
         
@@ -70,7 +70,7 @@ class DummyBot:
                     card = random.randint(2,14)
             while (card,suit) in self.suits: #check for existing card
                 suit = ((suit+1)%4)+1
-            self.suits[(card,suit)] = 1
+            self.suits.add((card,suit))
             self.table.append((card,suit))
             self.cur_cards[card] = self.cur_cards.get(card, 0) + 1
 
@@ -86,7 +86,7 @@ class DummyBot:
                     card = random.randint(2,14)
             while (card,suit) in self.suits: #check for existing card
                 suit = ((suit+1)%4)+1
-            self.suits[(card,suit)] = 1
+            self.suits.add((card,suit))
             self.opponents[-1].append((card,suit)) 
             self.cur_cards[card] = self.cur_cards.get(card, 0) + 1
 
@@ -99,7 +99,7 @@ class DummyBot:
                 card = random.randint(2,14)
         while (card,suit) in self.suits: #check for existing card
             suit = ((suit+1)%4)+1
-        self.suits[(card,suit)] = 1
+        self.suits.add((card,suit))
         self.table.append((card,suit))
         self.cur_cards[card] = self.cur_cards.get(card, 0) + 1
 
@@ -115,6 +115,7 @@ class DummyBot:
             for o in self.opponents:
                 op_hands.append(self.check_hand(o + self.table))
 
+            res = 1
             #check if opponent has better hand
             for hand in op_hands:
                 if hand[0] > bot_hand[0]:
@@ -123,9 +124,9 @@ class DummyBot:
                     if hand[1] > bot_hand[1]:
                         return -1
                     elif hand[1] == bot_hand[1]:
-                        return 0
+                        res = 0
             #if not, bot wins
-            return 1
+            return res
 
 
     def check_hand(self, hand):
