@@ -44,8 +44,7 @@ class DummyBot:
     def __init__(self):
         self.hand = [] #dummy hand
         self.table = [] #cards on table
-        self.cur_cards = {} #tracks max 4 of each card value
-        self.suits = set() #tracks any repeated card generations
+        self.suits = [set() for _ in range(12)] #tracks any repeated card generations
         self.opponents = [] #opponent hand
         
 
@@ -55,24 +54,21 @@ class DummyBot:
         for i in range(2):
             card = random.randint(2,14) #14 technically counts as 1 and 14 (ace)
             suit = random.randint(1,4)
-            while (card,suit) in self.suits: #check for existing card
-                suit = ((suit+1)%4)+1
-            self.suits.add((card,suit))
+            while suit in self.suits[card-3]: #check for existing card
+                suit = ((suit)%4)+1
+            self.suits[card-3].add(suit)
             self.hand.append((card,suit)) 
-            self.cur_cards[card] = self.cur_cards.get(card, 0) + 1
         
         #flop
         for i in range(3):
             card = random.randint(2,14)
             suit = random.randint(1,4)
-            if card in self.cur_cards:
-                while self.cur_cards[card] == 4: #make sure not more than 4 of card number/face
-                    card = random.randint(2,14)
-            while (card,suit) in self.suits: #check for existing card
-                suit = ((suit+1)%4)+1
-            self.suits.add((card,suit))
+            while len(self.suits[card-3]) == 4: #make sure not more than 4 of card number/face
+                card = random.randint(2,14)
+            while suit in self.suits[card-3]: #check for existing card
+                suit = ((suit)%4)+1
+            self.suits[card-3].add(suit)
             self.table.append((card,suit))
-            self.cur_cards[card] = self.cur_cards.get(card, 0) + 1
 
 
     #generate opponent for chance of losing/winning
@@ -81,27 +77,23 @@ class DummyBot:
         for i in range(2):
             card = random.randint(2,14) #14 technically counts as 1 and 14 (ace)
             suit = random.randint(1,4)
-            if card in self.cur_cards:
-                while self.cur_cards[card] == 4: #make sure not more than 4 of card number/face
-                    card = random.randint(2,14)
-            while (card,suit) in self.suits: #check for existing card
-                suit = ((suit+1)%4)+1
-            self.suits.add((card,suit))
+            while len(self.suits[card-3]) == 4: #make sure not more than 4 of card number/face
+                card = random.randint(2,14)
+            while suit in self.suits[card-3]: #check for existing card
+                suit = ((suit)%4)+1
+            self.suits[card-3].add(suit)
             self.opponents[-1].append((card,suit)) 
-            self.cur_cards[card] = self.cur_cards.get(card, 0) + 1
 
     #generate another table card each round
     def generate_cards(self):
         card = random.randint(2,14)
         suit = random.randint(1,4)
-        if card in self.cur_cards:
-            while self.cur_cards[card] == 4: #make sure not more than 4 of card number/face
-                card = random.randint(2,14)
-        while (card,suit) in self.suits: #check for existing card
-            suit = ((suit+1)%4)+1
-        self.suits.add((card,suit))
+        while len(self.suits[card-3]) == 4: #make sure not more than 4 of card number/face
+            card = random.randint(2,14)
+        while suit in self.suits[card-3]: #check for existing card
+            suit = ((suit)%4)+1
+        self.suits[card-3].add(suit)
         self.table.append((card,suit))
-        self.cur_cards[card] = self.cur_cards.get(card, 0) + 1
 
     def decide_winner(self):
         if len(self.hand + self.table) < 5 and len(self.opponents) < 1:
