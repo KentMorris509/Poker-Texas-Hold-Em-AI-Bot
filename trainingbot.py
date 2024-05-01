@@ -128,13 +128,11 @@ class DummyBot:
         card_suits = [x[1] for x in hand]
         card_suits += [x[1] for x in self.table]
 
-        high = card_nums[0]
+        high = card_nums[-1]
         combo = Hand.HIGH_CARD
         #check for duplicate combos
         new_val = False
         for i in range(1,len(card_nums)):
-            if card_nums[i] > high:
-                high = card_nums[i]
             if card_nums[i] == card_nums[i-1] and new_val == False:
                 if combo == Hand.HIGH_CARD:
                     combo = Hand.PAIR
@@ -164,7 +162,7 @@ class DummyBot:
         if combo == Hand.HIGH_CARD:
             straight = True
             for i in range(1,len(card_nums)):
-                if card_nums[i] != card_nums[i-1]+1:
+                if card_nums[i] != card_nums[i-1]+1 and not (card_nums[i-1] == 14 and card_nums[i] == 2):
                     straight = False
                 
         if straight and flush:
