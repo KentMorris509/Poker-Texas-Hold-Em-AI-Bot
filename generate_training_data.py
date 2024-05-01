@@ -18,31 +18,31 @@ def main():
             hand = dummy.get_hand()
             table = dummy.get_table()
             for card in hand:
-                pre_flop.write(str(card[0]) + " " + str(card[1]) + "\n")
-                flop.write(str(card[0]) + " " + str(card[1]) + "\n")
-                turn.write(str(card[0]) + " " + str(card[1]) + "\n")
-                river.write(str(card[0]) + " " + str(card[1]) + "\n")
+                pre_flop.write(str(card[0]) + "," + str(card[1]) + ",")
+                flop.write(str(card[0]) + "," + str(card[1]) + ",")
+                turn.write(str(card[0]) + "," + str(card[1]) + ",")
+                river.write(str(card[0]) + "," + str(card[1]) + ",")
             for card in table:
-                flop.write(str(card[0]) + " " + str(card[1]) + "\n")
-                turn.write(str(card[0]) + " " + str(card[1]) + "\n")
-                river.write(str(card[0]) + " " + str(card[1]) + "\n")
+                flop.write(str(card[0]) + "," + str(card[1]) + ",")
+                turn.write(str(card[0]) + "," + str(card[1]) + ",")
+                river.write(str(card[0]) + "," + str(card[1]) + ",")
             
             dummy.generate_opponent()
             dummy.generate_opponent()
             dummy.generate_cards()
             card = dummy.get_table()[-1]
-            turn.write(str(card[0]) + " " + str(card[1]) + "\n")
-            river.write(str(card[0]) + " " + str(card[1]) + "\n")
+            turn.write(str(card[0]) + "," + str(card[1]) + ",")
+            river.write(str(card[0]) + "," + str(card[1]) + ",")
             
             dummy.generate_cards()
             card = dummy.get_table()[-1]
-            river.write(str(card[0]) + " " + str(card[1]) + "\n")
+            river.write(str(card[0]) + "," + str(card[1]) + ",")
             
             winner = dummy.decide_winner()
-            pre_flop.write(str(winner) + "\n\n")
-            flop.write(str(winner) + "\n\n")
-            turn.write(str(winner) + "\n\n")
-            river.write(str(winner) + "\n\n")
+            pre_flop.write(str(winner) + "\n")
+            flop.write(str(winner) + "\n")
+            turn.write(str(winner) + "\n")
+            river.write(str(winner) + "\n")
 
         pre_flop.close()
         flop.close()

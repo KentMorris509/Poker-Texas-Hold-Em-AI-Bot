@@ -111,12 +111,12 @@ class DummyBot:
             #check if opponent has better hand
             for hand in op_hands:
                 if hand[0] > bot_hand[0]:
-                    return -1
+                    return 0
                 elif hand[0] == bot_hand[0]:
                     if hand[1] > bot_hand[1]:
-                        return -1
+                        return 0
                     elif hand[1] == bot_hand[1]:
-                        res = 0
+                        res = 1
             #if not, bot wins
             return res
 
