@@ -4,10 +4,10 @@ import pandas as pd
 from sklearn import metrics
 
 def main():
-    perceptrons = [Perceptron(), #preflop
-    Perceptron(), #flop
-    Perceptron(), #turn
-    Perceptron()] #river
+    perceptrons = [Perceptron(max_iter=100000, eta0=0.9, early_stopping=False), #preflop
+    Perceptron(max_iter=100000, eta0=0.9, early_stopping=False), #flop
+    Perceptron(max_iter=100000, eta0=0.25, early_stopping=False), #turn
+    Perceptron(max_iter=100000, eta0=0.25, early_stopping=False)] #river
     #train machines automatically with assumed data files
     dfs = [pd.read_csv("preflop.csv"),
     pd.read_csv("flop.csv"),
