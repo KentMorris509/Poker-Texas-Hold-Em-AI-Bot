@@ -1,6 +1,7 @@
 from sklearn.linear_model import Perceptron
 from sklearn.model_selection import train_test_split
 import pandas as pd
+import pickle
 from sklearn import metrics
 
 def main():
@@ -27,5 +28,15 @@ def main():
         y_pred = perceptrons[round].predict(x_y_data[round][1]) #test with X_test
         accuracy = metrics.accuracy_score(x_y_data[round][3], y_pred) #compare prediction to y_test
         print(f'Accuracy: {accuracy:.2f}')
+    
+    save_perceptrons(perceptrons)
+        
+
+def save_perceptrons(perceptrons, filename="perceptronObjects"):
+    with open(filename, 'wb') as f:
+        pickle.dump(perceptrons, f)
+        print(f"Perceptrons saved to {filename}")
+
 if __name__ == "__main__":
     main()
+    

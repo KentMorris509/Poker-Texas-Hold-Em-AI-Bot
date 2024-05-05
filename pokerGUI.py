@@ -1,10 +1,11 @@
 import tkinter as tk
 from tkinter import messagebox
 import random
-from trainingbot import DummyBot, Hand
+from trainingbot import DummyBot
 from perceptron import Perceptron
 import pandas as pd
 import os
+import pickle
 
 # Utility function to map card numbers to names
 def get_card_name(card):
@@ -24,6 +25,19 @@ def get_card_name(card):
     }
     return f"{card_dict.get(card_number, card_number)}{suit_dict[card_suit]}"
 
+# Function to load perceptrons from a file
+def load_perceptrons(filename="perceptronObjects"):
+    try:
+        with open(filename, 'rb') as f:
+            perceptrons = pickle.load(f)
+        return perceptrons
+    except FileNotFoundError:
+        messagebox.showerror("Error", f"Perceptrons file '{filename}' not found. Please train perceptrons first.")
+        raise SystemExit(1)  # Exit application gracefully
+    except Exception as e:
+        messagebox.showerror("Error", f"Error loading perceptrons: {str(e)}")
+        raise SystemExit(1)  # Exit application gracefully
+
 # Basic GUI setup for Poker Texas Hold'em
 class PokerGUI(tk.Tk):
     def __init__(self):
@@ -31,23 +45,11 @@ class PokerGUI(tk.Tk):
         self.title("Poker Texas Hold'em")
         self.geometry("400x400")
 
-        self.perceptrons = self.load_perceptrons()  # Load trained perceptrons
+        self.perceptrons = load_perceptrons()  # Load perceptrons
         self.dummy_bot = DummyBot()  # Initialize the bot
-        self.opponent_hand = []
-        self.community_cards = []
         
         self.create_widgets()
 
-    def load_perceptrons(self):
-        # Load trained perceptrons (customize this logic based on your data and models)
-        perceptrons = [Perceptron() for _ in range(4)]  # Preflop, Flop, Turn, River
-        perceptrons[0].fit(pd.read_csv("preflop.csv").iloc[:, :-1], pd.read_csv("preflop.csv").iloc[:, -1])
-        perceptrons[1].fit(pd.read_csv("flop.csv").iloc[:, :-1], pd.read_csv("flop.csv").iloc[:, -1])
-        perceptrons[2].fit(pd.read_csv("turn.csv").iloc[:, :-1], pd.read_csv("turn.csv").iloc[:, -1])
-        perceptrons[3].fit(pd.read_csv("river.csv").iloc[:, :-1], pd.read_csv("river.csv").iloc[:, -1])
-        
-        return perceptrons
-    
     def create_widgets(self):
         # Create poker game widgets
         self.player_hand_label = tk.Label(self, text="Player Hand:")
@@ -85,11 +87,15 @@ class PokerGUI(tk.Tk):
 
         # Use perceptron to decide the next step based on flop data
         flop_features = [card[0] for card in flop]  # Example feature extraction
-        flop_decision = self.perceptrons[1].predict([flop_features])
-        if flop_decision == 1:
-            self.result_label.config(text="Perceptron says: Play on Flop")
-        else:
-            self.result_label.config(text="Perceptron says: Fold on Flop")
+        try:
+            flop_decision = self.perceptrons[1].predict([flop_features])[0]
+            if flop_decision == 1:
+                self.result_label.config(text="Perceptron says: Play on Flop")
+            else:
+                self.result_label.config(text="Perceptron says: Fold on Flop")
+        except Exception as e:
+            messagebox.showerror("Error", f"Perceptron prediction error on flop: {str(e)}")
+            return  # Return early if there's a prediction error
         
         # Display the turn
         self.dummy_bot.generate_cards()  # Add a card for the turn
@@ -97,13 +103,17 @@ class PokerGUI(tk.Tk):
         turn_str = get_card_name(turn)
         self.turn_label.config(text=f"Turn: {turn_str}")
 
-        # Determine turn decision
+        # Use perceptron to decide the next step based on turn data
         turn_features = flop_features + [turn[0]]  # Extend with the turn card
-        turn_decision = self.perceptrons[2].predict([turn_features])
-        if turn_decision == 1:
-            self.result_label.config(text="Perceptron says: Play on Turn")
-        else:
-            self.result_label.config(text="Perceptron says: Fold on Turn")
+        try:
+            turn_decision = self.perceptrons[2].predict([turn_features])[0]
+            if turn_decision == 1:
+                self.result_label.config(text="Perceptron says: Play on Turn")
+            else:
+                self.result_label.config(text="Perceptron says: Fold on Turn")
+        except Exception as e:
+            messagebox.showerror("Error", f"Perceptron prediction error on turn: {str(e)}")
+            return
         
         # Display the river
         self.dummy_bot.generate_cards()  # Add a card for the river
@@ -111,14 +121,18 @@ class PokerGUI(tk.Tk):
         river_str = get_card_name(river)
         self.river_label.config(text=f"River: {river_str}")
 
-        # Determine river decision
+        # Use perceptron to decide the next step based on river data
         river_features = turn_features + [river[0]]  # Include the river card
-        river_decision = self.perceptrons[3].predict([river_features])
-        if river_decision == 1:
-            self.result_label.config(text="Perceptron says: Play on River")
-        else:
-            self.result_label.config(text="Perceptron says: Fold on River")
-
+        try:
+            river_decision = self.perceptrons[3].predict([river_features])[0]
+            if river_decision == 1:
+                self.result_label.config(text="Perceptron says: Play on River")
+            else:
+                self.result_label.config(text="Perceptron says: Fold on River")
+        except Exception as e:
+            messagebox.showerror("Error", f"Perceptron prediction error on river: {str(e)}")
+            return
+        
         # Generate opponents and determine the winner
         self.dummy_bot.generate_opponent()  # Generate opponent hands
         opponent_hand = self.dummy_bot.get_opponents()[0]
