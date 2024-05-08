@@ -111,9 +111,12 @@ class DummyBot:
             #check if opponent has better hand
             for hand in op_hands:
                 if hand[0] > bot_hand[0]:
-                    return 0
+                    return -1
                 elif hand[0] == bot_hand[0]:
-                    if hand[1] > bot_hand[1]:
+                    if hand[0] != Hand.STRAIGHT and hand[0] != Hand.FLUSH and hand[0] != Hand.STRAIGHT_FLUSH and hand[0] != Hand.ROYAL_FLUSH:
+                        if hand[2] < bot_hand[2]:
+                            res = 1
+                    elif hand[1] > bot_hand[1]:
                         return -1
                     elif hand[1] == bot_hand[1]:
                         res = 1
@@ -132,19 +135,25 @@ class DummyBot:
         combo = Hand.HIGH_CARD
         #check for duplicate combos
         new_val = False
+        combo_high = 0
         for i in range(1,len(card_nums)):
             if card_nums[i] == card_nums[i-1] and new_val == False:
                 if combo == Hand.HIGH_CARD:
                     combo = Hand.PAIR
+                    combo_high = card_nums[i]
                 elif combo == Hand.PAIR:
                     combo = Hand.THREE_KIND
+                    combo_high = card_nums[i]
                 elif combo == Hand.THREE_KIND:
                     combo = Hand.FOUR_KIND
+                    combo_high = card_nums[i]
             elif card_nums[i] == card_nums[i-1] and new_val:
                 if combo == Hand.HIGH_CARD:
                     combo = Hand.PAIR
+                    combo_high = card_nums[i]
                 elif combo == Hand.PAIR:
                     combo = Hand.TWO_PAIR
+                    combo_high = max(combo_high, card_nums[i])
                 elif combo == Hand.THREE_KIND:
                     combo = Hand.FULL_HOUSE
             elif card_nums[i] != card_nums[i-1] and combo != Hand.HIGH_CARD:
@@ -176,7 +185,7 @@ class DummyBot:
             elif straight:
                 combo = Hand.STRAIGHT
 
-        return (combo, high)
+        return (combo, high, combo_high)
     
     def get_hand(self):
         return self.hand
