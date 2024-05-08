@@ -5,10 +5,10 @@ import pickle
 from sklearn import metrics
 
 def main():
-    perceptrons = [Perceptron(max_iter=100000, eta0=0.25, early_stopping=False, random_state=60), #preflop
-    Perceptron(max_iter=100000, eta0=0.25, early_stopping=False), #flop
-    Perceptron(max_iter=100000, eta0=0.25, early_stopping=False), #turn
-    Perceptron(max_iter=100000, eta0=0.25, early_stopping=False)] #river
+    perceptrons = [Perceptron(max_iter=100000, eta0=0.25, early_stopping=False, random_state=90), #preflop
+    Perceptron(max_iter=100000, eta0=0.25, early_stopping=False, random_state=30), #flop
+    Perceptron(max_iter=100000, eta0=0.25, early_stopping=False, random_state=50), #turn
+    Perceptron(max_iter=100000, eta0=0.25, early_stopping=False, random_state=50)] #river
     #train machines automatically with assumed data files
     dfs = [pd.read_csv("preflop.csv"),
     pd.read_csv("flop.csv"),
