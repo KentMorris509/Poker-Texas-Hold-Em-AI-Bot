@@ -5,7 +5,7 @@ import pickle
 from sklearn import metrics
 
 def main():
-    perceptrons = [Perceptron(max_iter=100000, eta0=0.25, early_stopping=False), #preflop
+    perceptrons = [Perceptron(max_iter=100000, eta0=0.25, early_stopping=False, random_state=60), #preflop
     Perceptron(max_iter=100000, eta0=0.25, early_stopping=False), #flop
     Perceptron(max_iter=100000, eta0=0.25, early_stopping=False), #turn
     Perceptron(max_iter=100000, eta0=0.25, early_stopping=False)] #river
