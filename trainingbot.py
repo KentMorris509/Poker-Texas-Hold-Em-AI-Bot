@@ -114,7 +114,7 @@ class DummyBot:
                     return 0
                 elif hand[0] == bot_hand[0]:
                     if hand[1] > bot_hand[1]:
-                        return 0
+                        return -1
                     elif hand[1] == bot_hand[1]:
                         res = 1
             #if not, bot wins
