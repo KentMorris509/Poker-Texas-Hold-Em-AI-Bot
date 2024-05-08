@@ -27,8 +27,13 @@ def main():
                 turn.write(str(card[0]) + "," + str(card[1]) + ",")
                 river.write(str(card[0]) + "," + str(card[1]) + ",")
             
+            #4 opponents
             dummy.generate_opponent()
             dummy.generate_opponent()
+            dummy.generate_opponent()
+            dummy.generate_opponent()
+            #dummy.generate_opponent()
+
             dummy.generate_cards()
             card = dummy.get_table()[-1]
             turn.write(str(card[0]) + "," + str(card[1]) + ",")

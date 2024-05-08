@@ -116,6 +116,10 @@ class DummyBot:
                     if hand[0] != Hand.STRAIGHT and hand[0] != Hand.FLUSH and hand[0] != Hand.STRAIGHT_FLUSH and hand[0] != Hand.ROYAL_FLUSH:
                         if hand[2] < bot_hand[2]:
                             res = 1
+                        elif hand[2] > bot_hand[2]:
+                            return -1
+                        elif hand[1] > bot_hand[1]:
+                            return -1
                     elif hand[1] > bot_hand[1]:
                         return -1
                     elif hand[1] == bot_hand[1]:
