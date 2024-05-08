@@ -81,42 +81,50 @@ def compare_poker_hands(player_hand, opponent_hand, table):
     
     # Function to evaluate a poker hand and return a numeric value representing its strength
     def evaluate_poker_hand(hand):
-        if any(len(card) != 2 for card in hand):
-            raise ValueError("Each card must be a tuple of (rank, suit)")
-
+    # Extract ranks and suits
         ranks = sorted([card[0] for card in hand])
         suits = [card[1] for card in hand]
 
-        # Check for specific poker hands in order of rank
-        
+        # Define poker hand values
         if is_royal_flush(ranks, suits):
-            return 10
-        
-        if is_straight_flush(ranks, suits):
-            return 9
-        
-        if is_four_of_a_kind(ranks):
-            return 8
-        
-        if is_full_house(ranks):
-            return 7
-        
-        if is_flush(suits):
-            return 6
-        
-        if is_straight(ranks):
-            return 5
-        
-        if is_three_of_a_kind(ranks):
-            return 4
-        
-        if is_two_pair(ranks):
-            return 3
-        
-        if is_one_pair(ranks):
-            return 2
-        
-        return 1  # High card
+            return (10, [])  # Royal Flush
+        elif is_straight_flush(ranks, suits):
+            return (9, [ranks[-1]])  # Straight Flush, kicker is the highest card
+        elif is_four_of_a_kind(ranks):
+            # Find the rank that has four of a kind
+            four_rank = next(rank for rank in ranks if ranks.count(rank) == 4)
+            kicker = next(rank for rank in ranks if rank != four_rank)
+            return (8, [four_rank, kicker])  # Four of a Kind with kicker
+        elif is_full_house(ranks):
+            # Identify the triplet and pair
+            triple_rank = next(rank for rank in ranks if ranks.count(rank) == 3)
+            pair_rank = next(rank for rank in ranks if ranks.count(rank) == 2)
+            return (7, [triple_rank, pair_rank])  # Full House
+        elif is_flush(suits):
+            # Return the sorted card ranks for flush (highest is the main value)
+            return (6, ranks[::-1])  # Flush with kickers
+        elif is_straight(ranks):
+            # Straight is primarily determined by the highest card
+            return (5, [ranks[-1]])  # Straight with highest card as kicker
+        elif is_three_of_a_kind(ranks):
+            # Identify the triplet and kickers
+            triple_rank = next(rank for rank in ranks if ranks.count(rank) == 3)
+            kickers = sorted([rank for rank in ranks if rank != triple_rank], reverse=True)
+            return (4, [triple_rank] + kickers)  # Three of a Kind with kickers
+        elif is_two_pair(ranks):
+            # Identify both pairs and the highest kicker
+            pairs = [rank for rank in set(ranks) if ranks.count(rank) == 2]
+            kicker = max([rank for rank in ranks if ranks.count(rank) == 1])
+            return (3, pairs + [kicker])  # Two Pair with kickers
+        elif is_one_pair(ranks):
+            # Identify the pair and the three highest kickers
+            pair_rank = next(rank for rank in set(ranks) if ranks.count(rank) == 2)
+            kickers = sorted([rank for rank in ranks if rank != pair_rank], reverse=True)
+            return (2, [pair_rank] + kickers)  # One Pair with kickers
+        else:
+            # For High Card, the order of all cards is the key
+            return (1, ranks[::-1])  # High Card, reversed to sort by highest
+
 
     # Functions to determine specific poker hands
     def is_royal_flush(ranks, suits):
@@ -149,22 +157,32 @@ def compare_poker_hands(player_hand, opponent_hand, table):
     # Get all 5-card combinations for each hand
     player_combinations = get_combinations(player_full_hand)
     opponent_combinations = get_combinations(opponent_full_hand)
-    
+
     # Evaluate the best 5-card combination for each hand
     player_best_hand = max(player_combinations, key=evaluate_poker_hand)
     opponent_best_hand = max(opponent_combinations, key=evaluate_poker_hand)
-    
+
     # Compare the evaluated values of the best hands
     player_best_value = evaluate_poker_hand(player_best_hand)
     opponent_best_value = evaluate_poker_hand(opponent_best_hand)
-    
-    # Determine the winner
+
+    # Determine the winner, considering the main hand value and kickers
     if player_best_value > opponent_best_value:
         return "Player wins!"
     elif player_best_value < opponent_best_value:
         return "Opponent wins!"
     else:
-        return "It's a tie!"
+        # If main values are equal, compare the kickers
+        player_kickers = player_best_value[1]
+        opponent_kickers = opponent_best_value[1]
+
+        if player_kickers > opponent_kickers:
+            return "Player wins (kickers)!"
+        elif player_kickers < opponent_kickers:
+            return "Opponent wins (kickers)!"
+        else:
+            return "It's a tie!"
+
 
 # Utility function to map card numbers to names
 def get_card_name(card):
