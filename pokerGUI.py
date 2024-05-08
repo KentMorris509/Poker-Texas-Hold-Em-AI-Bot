@@ -137,7 +137,7 @@ def compare_poker_hands(player_hand, opponent_hand, table):
         return any(ranks.count(rank) == 4 for rank in ranks)
 
     def is_full_house(ranks):
-        return len(set(ranks)) == 2 and any(ranks.count(ranks) == 3)
+        return len(set(ranks)) == 2 and any(ranks.count(rank) == 3  for rank in ranks)
 
     def is_flush(suits):
         return len(set(suits)) == 1
@@ -220,7 +220,8 @@ PRE_FLOP = 0
 FLOP = 1
 TURN = 2
 RIVER = 3
-PLAYAGAIN = 4
+WINNER = 4
+PLAYAGAIN = 5
 
 # Basic GUI setup for Poker Texas Hold'em
 class PokerGUI(tk.Tk):
@@ -375,8 +376,15 @@ class PokerGUI(tk.Tk):
             except Exception as e:
                 messagebox.showerror("Error", f"Perceptron prediction error on river: {str(e)}")
                 return
+            
+            self.deal_button.config(text="Decide Winner")
+            self.game_stage = WINNER
         
             # Determine the winner
+        elif self.game_stage == WINNER:
+            print(self.player_hand)
+            print(self.opponent_hand)
+            print(self.table)
             winner = compare_poker_hands(self.player_hand,self.opponent_hand,self.table)
             
             self.result_label.config(text=winner)
