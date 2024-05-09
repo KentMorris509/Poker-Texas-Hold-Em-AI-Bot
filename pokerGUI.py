@@ -229,7 +229,15 @@ class PokerGUI(tk.Tk):
         super().__init__()
         self.title("Poker Texas Hold'em")
         self.geometry("400x400")
+         # Create an outer frame to simulate the red border
+        border_width = 10  # Adjust the border width as desired
+        self.outer_frame = tk.Frame(self, bg='red', padx=border_width, pady=border_width)  # Red border
+        self.outer_frame.pack(fill=tk.BOTH, expand=True)  # Fill the window
 
+        # Create an inner frame for the content
+        self.inner_frame = tk.Frame(self.outer_frame, bg='green')  # Your original background color
+        self.inner_frame.pack(fill=tk.BOTH, expand=True)  # Fill the inner frame
+       
         self.perceptrons = load_perceptrons()  # Load perceptrons
         
         self.create_widgets()
@@ -238,17 +246,18 @@ class PokerGUI(tk.Tk):
         self.table = []
 
     def create_widgets(self):
-        # Create poker game widgets
-        self.player_hand_label = tk.Label(self, text="Player Hand:")
-        self.flop_label = tk.Label(self, text="Flop:")
-        self.turn_label = tk.Label(self, text="Turn:")
-        self.river_label = tk.Label(self, text="River:")
-        self.opponent_hand_label = tk.Label(self, text="Opponent Hand:")
+        # Create poker game widgets with color customization
+        self.player_hand_label = tk.Label(self.inner_frame, text="Player Hand:", bg='green', fg='white')  # Green with white text
+        self.flop_label = tk.Label(self.inner_frame, text="Flop:", bg='green', fg='white')  # Green with white text
+        self.turn_label = tk.Label(self.inner_frame, text="Turn:", bg='green', fg='white')  # Green with white text
+        self.river_label = tk.Label(self.inner_frame, text="River:", bg='green', fg='white')  # Green with white text
+        self.opponent_hand_label = tk.Label(self, text="Opponent Hand:", bg='green', fg='firebrick1')  # Green with white text
         
-        self.deal_button = tk.Button(self, text="Deal", command=self.deal)
-        self.result_label = tk.Label(self, text="")
+        self.deal_button = tk.Button(self.inner_frame, text="Deal", command=self.deal, bg='red', fg='black')  # Red for deal button
         
-        # Pack widgets
+        self.result_label = tk.Label(self.inner_frame, text="", bg='green', fg='white')  # Green with white text
+        
+        # Pack widgets with padding
         self.player_hand_label.pack(pady=5)
         self.flop_label.pack(pady=5)
         self.turn_label.pack(pady=5)
@@ -256,7 +265,6 @@ class PokerGUI(tk.Tk):
         self.opponent_hand_label.pack(pady=5)
         self.deal_button.pack(pady=10)
         self.result_label.pack(pady=5)
-
 
     def clear_labels(self):
         # Clear all card-related labels
@@ -267,6 +275,11 @@ class PokerGUI(tk.Tk):
         self.opponent_hand_label.config(text="Opponent Hand:")
         self.result_label.config(text="")
         
+        self.player_hand_label.pack(pady=5)
+        self.flop_label.pack(pady=5)
+        self.turn_label.pack(pady=5)
+        self.river_label.pack(pady=5)
+        self.opponent_hand_label.pack(pady=5)
     def deal(self):
         if self.game_stage == PRE_FLOP:
             # Deal player and opponent hands
@@ -284,6 +297,7 @@ class PokerGUI(tk.Tk):
             self.player_hand_label.config(text=f"Player Hand: {player_hand_str}")
             
             self.player_table.extend([card for sublist in self.player_hand for card in sublist])
+            hand = np.array(self.player_table).reshape(1, -1)
             
             # Get opponent's hand
             self.opponent_hand = generate_preflop_hand(self.deck)
@@ -294,11 +308,10 @@ class PokerGUI(tk.Tk):
 
             try:
                 preflop_decision = self.perceptrons[0].predict(hand)
-                print(preflop_decision)
                 if preflop_decision == 1:
-                    self.result_label.config(text="Perceptron says: Play on Pre-Flop")
+                    self.result_label.config(text="POKER BOT says: Play on Pre-Flop")
                 else:
-                    self.result_label.config(text="Perceptron says: Fold on Pre-Flop")
+                    self.result_label.config(text="POKER BOT says: Fold on Pre-Flop")
             except Exception as e:
                 messagebox.showerror("Error", f"Perceptron prediction error on pre-flop: {str(e)}")
                 return
@@ -322,9 +335,9 @@ class PokerGUI(tk.Tk):
             try:
                 flop_decision = self.perceptrons[1].predict(hand)
                 if flop_decision == 1:
-                    self.result_label.config(text="Perceptron says: Play on Flop")
+                    self.result_label.config(text="POKER BOT says: Play on Flop")
                 else:
-                    self.result_label.config(text="Perceptron says: Fold on Flop")
+                    self.result_label.config(text="POKER BOT says: Fold on Flop")
             except Exception as e:
                 messagebox.showerror("Error", f"Perceptron prediction error on flop: {str(e)}")
                 return
@@ -346,9 +359,9 @@ class PokerGUI(tk.Tk):
             try:
                 turn_decision = self.perceptrons[2].predict(hand)
                 if turn_decision == 1:
-                    self.result_label.config(text="Perceptron says: Play on Turn")
+                    self.result_label.config(text="POKER BOT says: Play on Turn")
                 else:
-                    self.result_label.config(text="Perceptron says: Fold on Turn")
+                    self.result_label.config(text="POKER BOT says: Fold on Turn")
             except Exception as e:
                 messagebox.showerror("Error", f"Perceptron prediction error on turn: {str(e)}")
                 return
@@ -370,9 +383,9 @@ class PokerGUI(tk.Tk):
             try:
                 river_decision = self.perceptrons[3].predict(hand)
                 if river_decision == 1:
-                    self.result_label.config(text="Perceptron says: Play on River")
+                    self.result_label.config(text="POKER BOT says: Play on River")
                 else:
-                    self.result_label.config(text="Perceptron says: Fold on River")
+                    self.result_label.config(text="POKER BOT says: Fold on River")
             except Exception as e:
                 messagebox.showerror("Error", f"Perceptron prediction error on river: {str(e)}")
                 return
