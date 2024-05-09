@@ -251,7 +251,7 @@ class PokerGUI(tk.Tk):
         self.flop_label = tk.Label(self.inner_frame, text="Flop:", bg='green', fg='white')  # Green with white text
         self.turn_label = tk.Label(self.inner_frame, text="Turn:", bg='green', fg='white')  # Green with white text
         self.river_label = tk.Label(self.inner_frame, text="River:", bg='green', fg='white')  # Green with white text
-        self.opponent_hand_label = tk.Label(self, text="Opponent Hand:", bg='green', fg='firebrick1')  # Green with white text
+        self.opponent_hand_label = tk.Label(self.inner_frame, text="Opponent Hand:", bg='green', fg='firebrick1')  # Green with white text
         
         self.deal_button = tk.Button(self.inner_frame, text="Deal", command=self.deal, bg='red', fg='black')  # Red for deal button
         
