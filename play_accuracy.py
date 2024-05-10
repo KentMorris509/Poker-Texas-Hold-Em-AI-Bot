@@ -216,6 +216,7 @@ def main():
     turnS = 0
     riverS = 0
     totalS = 0
+    noFoldS = 0
     for i in range(trials):
        # Deal player and opponent hands
         player_table = []
@@ -283,16 +284,20 @@ def main():
             riverS += 1
         if (winner == 1 and  river_decision == 1 and turn_decision == 1 and flop_decision == 1 and preflop_decision == 1) or (winner !=1 and (river_decision != 1 or winner !=1) and (turn_decision != 1) or (winner !=1 and flop_decision != 1)  or (winner !=1 and preflop_decision != 1)):
             totalS += 1
+        if (winner == 1 and  river_decision == 1 and turn_decision == 1 and flop_decision == 1 and preflop_decision == 1):
+            noFoldS += 1
     
     preflopA = preflopS / trials
     flopA = flopS / trials
     turnA = turnS / trials
     riverA = riverS / trials
     totalA = totalS / trials
-    print(f'The preflop Accurracy is {preflopA}')
-    print(f'The flop Accurracy is {flopA}')
-    print(f'The turn Accurracy is {turnA}')
-    print(f'The river Accurracy is {riverA}')
-    print(f'The total Accurracy is {totalA}')
+    totalNoFoldA = noFoldS / trials
+    print(f'The preflop Accuracy is {preflopA}')
+    print(f'The flop Accuracy is {flopA}')
+    print(f'The turn Accuracy is {turnA}')
+    print(f'The river Accuracy is {riverA}')
+    print(f'The total Accuracy is {totalA}')
+    print(f'The total Accuracy with no Fold {totalNoFoldA}')
 
 main()
